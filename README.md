@@ -1,1 +1,1 @@
-# clother_shop
+# clothes_shop

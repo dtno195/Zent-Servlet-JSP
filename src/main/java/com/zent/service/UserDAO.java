@@ -189,5 +189,54 @@ public class UserDAO {
 		}
 		return null;
 	}
+	public static Boolean checkLogin(User user) {
+		String sql = "SELECT COUNT(*) FROM tbl_user WHERE username =? AND password=?";
+		try {
+			Connection conn = ConnectionUtil.open(); // Mở kết nối
+			PreparedStatement statement = conn.prepareStatement(sql); 
+			statement.setString(1, user.getUsername());
+			statement.setString(2, user.getPassword());
+			// Thực hiện câu truy vấn và lấy ra kết quả trả về
+			// Đối với các câu truy vấn bắt đầu bằng select thì sử dụng
+			// ExcuteQuery để truy vấn.
+			// Đối vs insert vs update thì dùng excute();
+			ResultSet rs = statement.executeQuery();
+			if (rs.next()) {
+				Long count = rs.getLong(1); // Cột cout sql
+				if (count > 0) {
+					return true;
+				}
+			}
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error(e.getMessage(),e);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error(e.getMessage(),e);
+		}
+		return false;
+	}
+
+	public static String getUser(String username) {
+		String sql = "SELECT full_name FROM tbl_user where username=?";
+		try {
+			Connection conn = ConnectionUtil.open();
+			// Mở kết nối
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, username);
+			ResultSet rs = statement.executeQuery();
+			if (rs.next()) {
+				return rs.getString("full_name");
+			}
+
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error(e.getMessage(),e);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error(e.getMessage(),e);
+		}
+		return null;
+	}
 
 }
