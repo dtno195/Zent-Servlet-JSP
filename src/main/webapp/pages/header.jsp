@@ -70,7 +70,8 @@
 				</button>
 				<a class="navbar-brand" href="index.jsp">
 					<p>
-						<i class="fa fa-shopping-cart" aria-hidden="true"></i>  ZentShop
+						<i class="fa fa-diamond" aria-hidden="true"></i> &nbsp;&nbsp;<b
+							style="color: orange">Zent&nbsp;Shop</b>
 					</p>
 				</a>
 			</div>
@@ -256,16 +257,7 @@
 			<div class="navbar-default sidebar" role="navigation">
 				<div class="sidebar-nav navbar-collapse">
 					<ul class="nav" id="side-menu">
-						<li class="sidebar-search">
-							<div class="input-group custom-search-form">
-								<input type="text" class="form-control" placeholder="Search...">
-								<span class="input-group-btn">
-									<button class="btn btn-default" type="button">
-										<i class="fa fa-search"></i>
-									</button>
-								</span>
-							</div> <!-- /input-group -->
-						</li>
+						
 						<li><a href="index.html"><i class="fa fa-dashboard fa-fw"></i>
 								Dashboard</a></li>
 						<li><a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>
@@ -278,8 +270,15 @@
 								Tables</a></li>
 						<li><a href="forms.html"><i class="fa fa-edit fa-fw"></i>
 								Forms</a></li>
-								<li><a href="<%=request.getContextPath() %>/pages/user.jsp"><i class="fa fa-user" aria-hidden="true"></i>
-								User</a></li>
+						<li><a href="#"><i class="fa fa-users" aria-hidden="true"></i>
+								User - Role<span class="fa arrow"></span></a>
+							<ul class="nav nav-second-level">
+								<li><a href="<%=request.getContextPath()%>/user-manager?action=search&page=1"><i
+										class="fa fa-user" aria-hidden="true"></i> &nbsp;User</a></li>
+								<li><a href="<%=request.getContextPath()%>/pages/user.jsp"><i
+										class="fa fa-sort" aria-hidden="true"></i> &nbsp;&nbsp;Role</a></li>
+							</ul> <!-- /.nav-second-level --></li>
+
 						<li><a href="#"><i class="fa fa-wrench fa-fw"></i> UI
 								Elements<span class="fa arrow"></span></a>
 							<ul class="nav nav-second-level">

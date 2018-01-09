@@ -10,17 +10,17 @@ import java.util.Properties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectionUtil {
+public class DBConnection {
 	public static String driver;
 	public static String hostName;
 	public static String port;
 	public static String databaseName;
 	public static String username;
 	public static String password;
-	public static final Logger LOGGER = LoggerFactory.getLogger(ConnectionUtil.class);
+	public static final Logger LOGGER = LoggerFactory.getLogger(DBConnection.class);
 	public static Connection open() throws ClassNotFoundException, SQLException {
 		try {
-			InputStream inputStream = ConnectionUtil.class.getClassLoader()
+			InputStream inputStream = DBConnection.class.getClassLoader()
 					.getResourceAsStream("config.properties");
 			Properties properties = new Properties();
 			properties.load(inputStream);

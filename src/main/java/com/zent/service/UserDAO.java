@@ -11,7 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.zent.entity.User;
-import com.zent.util.ConnectionUtil;
+import com.zent.util.DBConnection;
 import com.zent.util.Constants;
 
 public class UserDAO {
@@ -21,7 +21,7 @@ public class UserDAO {
 		String sql = "INSERT INTO tbl_User(username,password,full_name,role_id) VALUES (?,?,?,?)";
 		Connection conn;
 		try {
-			conn = ConnectionUtil.open();
+			conn = DBConnection.open();
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, user.getUsername());
 			statement.setString(2, user.getPassword());
@@ -41,7 +41,7 @@ public class UserDAO {
 		String sql = "UPDATE tbl_User SET username=?,password=?,full_name=?,role_id=? WHERE user_id=?";
 		Connection conn;
 		try {
-			conn = ConnectionUtil.open();
+			conn = DBConnection.open();
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, user.getUsername());
 			statement.setString(2, user.getPassword());
@@ -62,7 +62,7 @@ public class UserDAO {
 		String sql = "DELETE FROM tbl_User WHERE user_id=?";
 		Connection conn;
 		try {
-			conn = ConnectionUtil.open();
+			conn = DBConnection.open();
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setLong(1, user.getUserId());
 			statement.execute();
@@ -80,7 +80,7 @@ public class UserDAO {
 		String sql = "SELECT * FROM tbl_User";
 		Connection conn;
 		try {
-			conn = ConnectionUtil.open();
+			conn = DBConnection.open();
 			// Mở kết nối
 			PreparedStatement statement = conn.prepareStatement(sql);
 			ResultSet rs = statement.executeQuery();
@@ -106,15 +106,14 @@ public class UserDAO {
 	}
 
 	public Long getCount(String keyword) {
-		String sql = "SELECT COUNT(*) FROM tbl_User WHERE  username ? OR full_name LIKE ? OR role_id = ? ";
+		String sql = "SELECT COUNT(*) FROM tbl_User WHERE  username ? OR full_name LIKE ?  ";
 		Connection conn;
 		try {
-			conn = ConnectionUtil.open();
+			conn = DBConnection.open();
 			// Mở kết nối
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, "%" + keyword + "%");
 			statement.setString(2, "%" + keyword + "%");
-			statement.setLong(3, Long.parseLong(keyword));
 			ResultSet rs = statement.executeQuery();
 			List<User> listSearchSP = new ArrayList<User>();
 			while (rs.next()) {
@@ -131,11 +130,11 @@ public class UserDAO {
 	}
 
 	public List<User> search(String keyword, Integer page) {
-		String sql = "SELECT * FROM tbl_User WHERE username ? OR full_name LIKE ? OR role_id = ? ";
-		sql += " LIMIT " + (page - 1) * Constants.PAGE_SIZE + " ," + Constants.PAGE_SIZE;
+		String sql = "SELECT * FROM tbl_User WHERE username ? OR full_name LIKE ?";
+		sql += " LIMIT " + (page - 1) * Constants.PAGE_SIZE + " , " + Constants.PAGE_SIZE;
 		Connection conn;
 		try {
-			conn = ConnectionUtil.open();
+			conn = DBConnection.open();
 			// Mở kết nối
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, "%" + keyword + "%");
@@ -166,7 +165,7 @@ public class UserDAO {
 		String sql = "SELECT * from tbl_User where id=?";
 		Connection conn;
 		try {
-			conn = ConnectionUtil.open();
+			conn = DBConnection.open();
 			// Mở kết nối
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setLong(1, id);
@@ -192,7 +191,7 @@ public class UserDAO {
 	public static Boolean checkLogin(User user) {
 		String sql = "SELECT COUNT(*) FROM tbl_user WHERE username =? AND password=?";
 		try {
-			Connection conn = ConnectionUtil.open(); // Mở kết nối
+			Connection conn = DBConnection.open(); // Mở kết nối
 			PreparedStatement statement = conn.prepareStatement(sql); 
 			statement.setString(1, user.getUsername());
 			statement.setString(2, user.getPassword());
@@ -220,7 +219,7 @@ public class UserDAO {
 	public static String getUser(String username) {
 		String sql = "SELECT full_name FROM tbl_user where username=?";
 		try {
-			Connection conn = ConnectionUtil.open();
+			Connection conn = DBConnection.open();
 			// Mở kết nối
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, username);
