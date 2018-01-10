@@ -12,10 +12,12 @@
 	<div class="col-lg-12">
 		<div class="panel panel-default">
 			<div class="panel-heading">
-				<a class="btn btn-md btn-success"
-					href="<%=request.getContextPath()%>/user-manager?action=insert"
-					role="button"><i class="fa fa-plus" aria-hidden="true"></i> Add
-					New</a>
+				<div>
+					<a class="btn btn-md btn-success"
+						href="<%=request.getContextPath()%>/user-manager?action=insert"
+						role="button"><i class="fa fa-plus" aria-hidden="true"></i>
+						Add New</a>
+				</div>
 			</div>
 			<div class="panel-body">
 				<div class="table-responsive">
@@ -28,10 +30,10 @@
 								<th>Password</th>
 								<th>Full Name</th>
 								<th>Role Id</th>
-								<th colspan="3">Action</th>
+								<th colspan=3 style="text-align: center">Action</th>
 							</tr>
 						</thead>
-						<c:forEach items="${users}" var="user">
+						<c:forEach items="${listUser}" var="user">
 							<tbody>
 								<tr>
 									<td><c:out value="${user.userId }"></c:out></td>
@@ -40,17 +42,14 @@
 									<td><c:out value="${user.fullName }"></c:out></td>
 									<td><c:out value="${user.roleId }"></c:out></td>
 									<td><a class="btn btn-md btn-info"
-										href="<%=request.getContextPath()%>/UserController?action=insert"
-										role="button"><i class="fa fa-pencil-square-o"
-											aria-hidden="true"></i> Edit</a></td>
+										href="<%=request.getContextPath() %>/user-manager?action=edit&id=<c:out value="${user.userId }"></c:out>"
+										role="button"><i class="fa fa-pencil-square-o"></i>&nbsp;
+											Edit</a></td>
 									<td><a class="btn btn-md btn-danger"
-										href="<%=request.getContextPath()%>/UserController?action=insert"
-										role="button"><i class="fa fa-trash" aria-hidden="true"></i>Delete</a>
-									</td>
-									<td><a class="btn btn-md btn-danger"
-										href="<%=request.getContextPath()%>/UserController?action=insert"
-										role="button"><i class="fa fa-wrench" aria-hidden="true"></i>Update
-											Role</a></td>
+										href="<%=request.getContextPath() %>/user-manager?action=delete&id=<c:out value="${user.userId }"></c:out>"
+										role="button"><i class="fa fa-trash"></i>&nbsp;Delete</a></td>
+									<td><a class="btn btn-md btn-danger" href="" role="button"><i
+											class="fa fa-wrench"></i>&nbsp;Update Role</a></td>
 								</tr>
 								<!-- <tr class="info">
 									<td>2</td>

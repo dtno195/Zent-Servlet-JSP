@@ -130,7 +130,7 @@ public class UserDAO {
 	}
 
 	public List<User> search(String keyword, Integer page) {
-		String sql = "SELECT * FROM tbl_User WHERE username ? OR full_name LIKE ?";
+		String sql = "SELECT * FROM tbl_User WHERE username LIKE ? OR full_name LIKE ?";
 		sql += " LIMIT " + (page - 1) * Constants.PAGE_SIZE + " , " + Constants.PAGE_SIZE;
 		Connection conn;
 		try {

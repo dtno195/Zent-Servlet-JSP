@@ -13,9 +13,6 @@
 		<div class="panel panel-default">
 			<div class="panel-heading">
 
-				<button type="button" class="btn btn-primary" >
-					<i class="fa fa-plus" aria-hidden="true"></i> Add New
-				</button>
 			</div>
 			<div class="panel-body">
 				<div class="table-responsive">
@@ -23,8 +20,8 @@
 						<thead>
 							<tr>
 								<th>#</th>
-								<th>First Name</th>
-								<th>Last Name</th>
+								<th>User Id</th>
+								<th>Username</th>
 								<th>Username</th>
 							</tr>
 						</thead>

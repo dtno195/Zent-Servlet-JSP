@@ -42,12 +42,14 @@ public class UserController extends HttpServlet {
 			throws ServletException, IOException {
 		String forward = "";
 		String action = request.getParameter("action");
+		List<User> list = dao.getAll();
+		request.setAttribute("listUser", list);
 		if (action.equalsIgnoreCase("delete")) {
 			Long userId = Long.parseLong(request.getParameter("id"));
 			User user = new User();
 			user.setUserId(userId);
 			dao.delete(user);
-			response.sendRedirect(request.getContextPath() + "user-manager?action=search&page=1");
+			response.sendRedirect(request.getContextPath() + "/user-manager?action=search&page=1");
 			return;
 
 		} else if (action.equalsIgnoreCase("edit")) {
