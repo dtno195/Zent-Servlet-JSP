@@ -54,7 +54,7 @@
 
 </head>
 
-<body>
+<body style="background-color: #f8f8f8;">
 
 	<div id="wrapper">
 
@@ -78,11 +78,11 @@
 			<!-- /.navbar-header -->
 
 			<ul class="nav navbar-top-links navbar-right">
-				<li class="dropdown"><a class="dropdown-toggle"
+				<!-- <li class="dropdown"><a class="dropdown-toggle"
 					data-toggle="dropdown" href="#"> <i
 						class="fa fa-envelope fa-fw"></i> <i class="fa fa-caret-down"></i>
-				</a>
-					<ul class="dropdown-menu dropdown-messages">
+				</a> -->
+<!-- 					<ul class="dropdown-menu dropdown-messages">
 						<li><a href="#">
 								<div>
 									<strong>John Smith</strong> <span class="pull-right text-muted">
@@ -116,9 +116,9 @@
 						<li><a class="text-center" href="#"> <strong>Read
 									All Messages</strong> <i class="fa fa-angle-right"></i>
 						</a></li>
-					</ul> <!-- /.dropdown-messages --></li>
+					</ul> /.dropdown-messages</li> -->
 				<!-- /.dropdown -->
-				<li class="dropdown"><a class="dropdown-toggle"
+				<!-- <li class="dropdown"><a class="dropdown-toggle"
 					data-toggle="dropdown" href="#"> <i class="fa fa-tasks fa-fw"></i>
 						<i class="fa fa-caret-down"></i>
 				</a>
@@ -190,9 +190,9 @@
 						<li><a class="text-center" href="#"> <strong>See
 									All Tasks</strong> <i class="fa fa-angle-right"></i>
 						</a></li>
-					</ul> <!-- /.dropdown-tasks --></li>
+					</ul> /.dropdown-tasks</li> -->
 				<!-- /.dropdown -->
-				<li class="dropdown"><a class="dropdown-toggle"
+				<!-- <li class="dropdown"><a class="dropdown-toggle"
 					data-toggle="dropdown" href="#"> <i class="fa fa-bell fa-fw"></i>
 						<i class="fa fa-caret-down"></i>
 				</a>
@@ -235,7 +235,7 @@
 						<li><a class="text-center" href="#"> <strong>See
 									All Alerts</strong> <i class="fa fa-angle-right"></i>
 						</a></li>
-					</ul> <!-- /.dropdown-alerts --></li>
+					</ul> /.dropdown-alerts</li> -->
 				<!-- /.dropdown -->
 				<li class="dropdown"><a class="dropdown-toggle"
 					data-toggle="dropdown" href="#"> <i class="fa fa-user fa-fw"></i>
@@ -275,7 +275,7 @@
 							<ul class="nav nav-second-level">
 								<li><a href="<%=request.getContextPath()%>/user-manager?action=search&page=1"><i
 										class="fa fa-user" aria-hidden="true"></i> &nbsp;User</a></li>
-								<li><a href="<%=request.getContextPath()%>/pages/user.jsp"><i
+								<li><a href="<%=request.getContextPath()%>/role-manager?action=search&page=1"><i
 										class="fa fa-sort" aria-hidden="true"></i> &nbsp;&nbsp;Role</a></li>
 							</ul> <!-- /.nav-second-level --></li>
 

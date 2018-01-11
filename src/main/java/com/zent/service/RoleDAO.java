@@ -100,17 +100,30 @@ public class RoleDAO {
 		return null;
 	}
 
-	public Long getCount(String keyword) {
-		String sql = "SELECT COUNT(*) FROM tbl_role WHERE  name ? OR description LIKE ?  ";
-		Connection conn;
+	public Long getCount(Role role) {
+		//String sql = "SELECT COUNT(*) FROM tbl_role WHERE  name LIKE ? OR description LIKE ?  ";
+		
 		try {
+			Connection conn;
 			conn = DBConnection.open();
-			// Mở kết nối
+			String sql = "SELECT COUNT(*) FROM tbl_role WHERE 1=1";
+			Integer count = 0;
+			if(role.getName() !=null && role.getName().trim() !="") {
+				sql+= " AND name LIKE ?";
+			}
+			if(role.getDescription()!=null && role.getDescription().trim() !="") {
+				sql+=" AND description LIKE ?";
+			}
 			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, "%" + keyword + "%");
-			statement.setString(2, "%" + keyword + "%");
+			if(role.getDescription()!=null && role.getDescription().trim() !="") {
+				count++;
+				statement.setString(count, "%"+role.getName().trim()+"%");
+			}
+			if(role.getDescription()!=null && role.getDescription().trim() !="") {
+				count++;
+				statement.setString(count, "%"+role.getDescription().trim()+"%");
+			}
 			ResultSet rs = statement.executeQuery();
-			List<Role> listSearchSP = new ArrayList<Role>();
 			while (rs.next()) {
 				return rs.getLong(1);
 			}
@@ -124,26 +137,46 @@ public class RoleDAO {
 		return 0L;
 	}
 
-	public List<Role> search(String keyword, Integer page) {
-		String sql = "SELECT * FROM tbl_role WHERE name LIKE ? OR description LIKE ?";
-		sql += " LIMIT " + (page - 1) * Constants.PAGE_SIZE + " , " + Constants.PAGE_SIZE;
-		Connection conn;
+	public List<Role> search(Role role , Integer pageNumber , Integer pageSize) {
+		List<Role> result = new ArrayList<Role>();
+		
+		//sql += " LIMIT " + (page - 1) * Constants.PAGE_SIZE + " , " + Constants.PAGE_SIZE;
+		String sql = "SELECT * FROM tbl_role WHERE 1=1 ";
 		try {
+			Integer count =0;
+			Connection conn;
 			conn = DBConnection.open();
-			// Mở kết nối
-			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, "%" + keyword + "%");
-			statement.setString(2, "%" + keyword + "%");
-			ResultSet rs = statement.executeQuery();
-			List<Role> listSearchSP = new ArrayList<Role>();
-			while (rs.next()) {
-				Role role = new Role();
-				role.setId(rs.getLong("role_id"));
-				role.setName(rs.getString("name"));
-				role.setDescription(rs.getString("description"));
-				listSearchSP.add(role);
+			
+			if(role.getName() != null && role.getName().trim() != "") {
+				sql+= " AND name LIKE ?";
 			}
-			return listSearchSP;
+			if(role.getDescription()!=null && role.getDescription().trim() !="") {
+				sql+=" AND description LIKE ?";
+			}
+			sql+=" ORDER BY role_id ASC ";
+			if(pageNumber>0 && pageSize >0 ) {
+				sql+= " LIMIT "+((pageNumber - 1) * pageSize)+" , "+pageSize;
+			}
+			PreparedStatement statement = conn.prepareStatement(sql);
+			if(role.getName()!=null && role.getName().trim() !="") {
+				count++;
+				statement.setString(count, "%"+role.getName().trim()+"%");
+			}
+			if(role.getDescription()!=null && role.getDescription().trim() !="") {
+				count++;
+				statement.setString(count, "%"+role.getDescription().trim()+"%");
+			}
+			
+			ResultSet rs = statement.executeQuery();
+			
+			while (rs.next()) {
+				Role r = new Role();
+				r.setId(rs.getLong(1));
+				r.setName(rs.getString(2));
+				r.setDescription(rs.getString(3));
+				result.add(r);
+			}
+			return result;
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			LOGGER.error(e.getMessage(), e);
@@ -151,7 +184,7 @@ public class RoleDAO {
 			// TODO Auto-generated catch block
 			LOGGER.error(e.getMessage(), e);
 		}
-		return null;
+		return result;
 	}
 
 	public Role getById(Long id) {
@@ -165,7 +198,6 @@ public class RoleDAO {
 			ResultSet rs = statement.executeQuery();
 			Role role = new Role();
 			if (rs.next()) {
-				
 				role.setId(rs.getLong("role_id"));
 				role.setName(rs.getString("name"));
 				role.setDescription(rs.getString("description"));

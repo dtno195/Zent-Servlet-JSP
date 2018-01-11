@@ -12,6 +12,8 @@
 <!-- Metis Menu Plugin JavaScript -->
 <script
 	src="<%=request.getContextPath()%>/vendor/metisMenu/metisMenu.min.js"></script>
+	<script
+	src="<%=request.getContextPath()%>/js/bootstrap-confirmation.js"></script>
 
 <!-- DataTables JavaScript -->
 <script

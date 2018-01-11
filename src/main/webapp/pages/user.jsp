@@ -10,7 +10,46 @@
 <div class="row">
 
 	<div class="col-lg-12">
-		<div class="panel panel-default">
+
+		<div class="panel panel-primary ">
+			<div class="panel-heading">Search Infomation</div>
+			<div class="panel-body ">
+				<div class="row justify-content-md-center">
+					<form role="form" method="POST" action='user-manager?action=search'
+						name="frmSearchUser">
+						<div class="col-md-4">
+							<div class="form-group">
+								<label> Username</label> <input class="form-control" type="text"
+									name="name" value="<c:out value="${user.username}" />" />
+
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label> Full Name</label> <input class="form-control"
+									type="text" name="description"
+									value="<c:out value="${user.fullName}" />" />
+
+							</div>
+						</div>
+						<div class="col-md-4">
+							<div class="form-group">
+								<label> Role Name</label> <input class="form-control"
+									type="text" name="description"
+									value="<c:out value="${user.roleId}" />" />
+							</div>
+						</div>
+						<div class="col-md-4 ">
+							<div class="form-group">
+								<button type="submit" class="btn btn-primary btn-md">Tìm
+									kiếm</button>
+							</div>
+						</div>
+					</form>
+				</div>
+			</div>
+		</div>
+		<div class="panel panel-primary">
 			<div class="panel-heading">
 				<div>
 					<a class="btn btn-md btn-success"
@@ -33,7 +72,7 @@
 								<th colspan=3 style="text-align: center">Action</th>
 							</tr>
 						</thead>
-						<c:forEach items="${listUser}" var="user">
+						<c:forEach items="${users}" var="user">
 							<tbody>
 								<tr>
 									<td><c:out value="${user.userId }"></c:out></td>
@@ -51,12 +90,6 @@
 									<td><a class="btn btn-md btn-danger" href="" role="button"><i
 											class="fa fa-wrench"></i>&nbsp;Update Role</a></td>
 								</tr>
-								<!-- <tr class="info">
-									<td>2</td>
-									<td>Jacob</td>
-									<td>Thornton</td>
-									<td>@fat</td>
-								</tr> -->
 							</tbody>
 						</c:forEach>
 
