@@ -143,7 +143,6 @@ public class RoleDAO {
 		//sql += " LIMIT " + (page - 1) * Constants.PAGE_SIZE + " , " + Constants.PAGE_SIZE;
 		String sql = "SELECT * FROM tbl_role WHERE 1=1 ";
 		try {
-			Integer count =0;
 			Connection conn;
 			conn = DBConnection.open();
 			
@@ -158,14 +157,7 @@ public class RoleDAO {
 				sql+= " LIMIT "+((pageNumber - 1) * pageSize)+" , "+pageSize;
 			}
 			PreparedStatement statement = conn.prepareStatement(sql);
-			if(role.getName()!=null && role.getName().trim() !="") {
-				count++;
-				statement.setString(count, "%"+role.getName().trim()+"%");
-			}
-			if(role.getDescription()!=null && role.getDescription().trim() !="") {
-				count++;
-				statement.setString(count, "%"+role.getDescription().trim()+"%");
-			}
+			
 			
 			ResultSet rs = statement.executeQuery();
 			

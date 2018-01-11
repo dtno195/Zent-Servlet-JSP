@@ -42,8 +42,8 @@ public class UserController extends HttpServlet {
 			throws ServletException, IOException {
 		String forward = "";
 		String action = request.getParameter("action");
-		List<User> list = dao.getAll();
-		request.setAttribute("listUser", list);
+//		List<User> list = dao.getAll();
+//		request.setAttribute("listUser", list);
 		if (action.equalsIgnoreCase("delete")) {
 			Long userId = Long.parseLong(request.getParameter("id"));
 			User user = new User();
@@ -77,14 +77,37 @@ public class UserController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		doGet(request, response);
+		String action = request.getParameter("action");
+		User user = new User();
+		user.setUsername(request.getParameter("username"));
+		user.setPassword(request.getParameter("password"));
+		user.setFullName(request.getParameter("fullname"));
+		if(action.equalsIgnoreCase("save")) {
+			String userId = request.getParameter("id");
+			if(userId == null || userId.isEmpty()) {
+				dao.insert(user);
+			}else {
+				user.setUserId(Long.parseLong(userId));
+				dao.update(user);
+			}
+			response.sendRedirect(request.getContextPath()+"/user-manager?action=search&page=1");
+		}
+		else if(action.equalsIgnoreCase("search")) {
+			String foward = SEARCH;
+			Integer page = request.getParameter("page") != null ? Integer
+					.parseInt(request.getParameter("page")) : 1;
+			setSearchList(request, user, page);
+			RequestDispatcher dispatcher = request.getRequestDispatcher(foward);
+			dispatcher.forward(request, response);
+		}
 	}
-	private void setSearchList(HttpServletRequest request,User user,Integer page) {
-		String keyword = request.getParameter("search");
-		request.setAttribute("users", dao.search(keyword, page));
-		Long count = dao.getCount(keyword);
-		request.setAttribute("page",Math.ceil(Double.parseDouble(count.toString())/Constants.PAGE_SIZE));
+	private void setSearchList(HttpServletRequest request,User user,Integer pageNumber) {
+		Integer pageSize = Constants.PAGE_SIZE;
+		request.setAttribute("users", dao.search(user, pageNumber, pageSize));
+		Long count = dao.getCount(user);
+		if (count % pageSize != 0)
+			count = (long) (Math.ceil(Double.parseDouble(count.toString())/Constants.PAGE_SIZE));
+		request.setAttribute("count", count);
 	}
 
 }

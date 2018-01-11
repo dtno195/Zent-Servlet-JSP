@@ -105,17 +105,29 @@ public class UserDAO {
 		return null;
 	}
 
-	public Long getCount(String keyword) {
-		String sql = "SELECT COUNT(*) FROM tbl_User WHERE  username ? OR full_name LIKE ?  ";
-		Connection conn;
+	public Long getCount(User user) {
+		
 		try {
+			Connection conn;
+			String sql = "SELECT COUNT(*) FROM tbl_User WHERE  1=1";
 			conn = DBConnection.open();
-			// Mở kết nối
+			Integer count = 0;
+			if(user.getUsername() !=null && user.getUsername().trim() !="") {
+				sql+=" AND username LIKE ?";
+			}
+			if(user.getFullName() !=null && user.getFullName().trim() !="") {
+				sql+=" AND full_name LIKE ?";
+			}
 			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, "%" + keyword + "%");
-			statement.setString(2, "%" + keyword + "%");
+			if(user.getFullName() !=null && user.getFullName().trim() !="") {
+				count++;
+				statement.setString(count, "%"+user.getUsername()+"%");
+			}
+			if(user.getFullName() !=null && user.getFullName().trim() !="") {
+				count++;
+				statement.setString(count, "%"+user.getFullName()+"%");
+			}
 			ResultSet rs = statement.executeQuery();
-			List<User> listSearchSP = new ArrayList<User>();
 			while (rs.next()) {
 				return rs.getLong(1);
 			}
@@ -129,28 +141,37 @@ public class UserDAO {
 		return 0L;
 	}
 
-	public List<User> search(String keyword, Integer page) {
-		String sql = "SELECT * FROM tbl_User WHERE username LIKE ? OR full_name LIKE ?";
-		sql += " LIMIT " + (page - 1) * Constants.PAGE_SIZE + " , " + Constants.PAGE_SIZE;
-		Connection conn;
+	public List<User> search(User user, Integer pageNumber , Integer pageSize) {
+		List<User> result = new ArrayList<User>();
+		String sql = "SELECT * FROM tbl_User WHERE 1=1 ";
+		
+		
 		try {
+			Connection conn;
 			conn = DBConnection.open();
-			// Mở kết nối
-			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, "%" + keyword + "%");
-			statement.setString(2, "%" + keyword + "%");
-			ResultSet rs = statement.executeQuery();
-			List<User> listSearchSP = new ArrayList<User>();
-			while (rs.next()) {
-				User user = new User();
-				user.setUserId(rs.getLong("user_id"));
-				user.setUsername(rs.getString("username"));
-				user.setPassword(rs.getString("password"));
-				user.setFullName(rs.getString("full_name"));
-				user.setRoleId(rs.getLong("role_id"));
-				listSearchSP.add(user);
+			if(user.getUsername() !=null && user.getUsername().trim() !="") {
+				sql+=" AND username LIKE ?";
 			}
-			return listSearchSP;
+			if(user.getFullName() !=null && user.getFullName().trim() !="") {
+				sql+=" AND full_name LIKE ?";
+			}
+			sql+=" ORDER BY user_id ASC ";
+			if(pageNumber>0 && pageSize >0 ) {
+				sql+= " LIMIT "+((pageNumber - 1) * pageSize)+" , "+pageSize;
+			}
+			PreparedStatement statement = conn.prepareStatement(sql);
+			
+			ResultSet rs = statement.executeQuery();
+			while (rs.next()) {
+				User u = new User();
+				u.setUserId(rs.getLong("user_id"));
+				u.setUsername(rs.getString("username"));
+				u.setPassword(rs.getString("password"));
+				u.setFullName(rs.getString("full_name"));
+				u.setRoleId(rs.getLong("role_id"));
+				result.add(user);
+			}
+			return result;
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			LOGGER.error(e.getMessage(), e);
@@ -158,7 +179,7 @@ public class UserDAO {
 			// TODO Auto-generated catch block
 			LOGGER.error(e.getMessage(), e);
 		}
-		return null;
+		return result;
 	}
 
 	public User getById(Long id) {
