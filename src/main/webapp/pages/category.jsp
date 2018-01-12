@@ -3,7 +3,7 @@
 <%@include file="header.jsp"%>
 <div class="row">
 	<div class="col-lg-12">
-		<h1 class="page-header">Role Manager</h1>
+		<h1 class="page-header">Category Manager</h1>
 	</div>
 	<!-- /.col-lg-12 -->
 </div>
@@ -15,27 +15,20 @@
 			<div class="panel-heading">Search Infomation</div>
 			<div class="panel-body ">
 				<div class="row justify-content-md-center">
-					<form role="form" method="POST" action='user-manager?action=search'
-						name="frmSearchRole">
-						<div class="col-md-4">
+					<form category="form" method="POST" action='category-manager?action=search'
+						name="frmSearchcategory">
+						<div class="col-md-6">
 							<div class="form-group">
-								<label>Username</label> <input class="form-control" type="text"
-									name="name" value="<c:out value="${user.username}" />" />
-							</div>
-						</div>
-						<div class="col-md-4">
-							<div class="form-group">
-								<label> Full Name</label> <input class="form-control"
-									type="text" name="description"
-									value="<c:out value="${user.fullName}" />" />
+								<label> Name</label> <input class="form-control" type="text"
+									name="name" value="<c:out value="${category.name}" />" />
 
 							</div>
 						</div>
-						<div class="col-md-4">
+						<div class="col-md-6">
 							<div class="form-group">
-								<label> Role Id</label> <input class="form-control"
+								<label> Description</label> <input class="form-control"
 									type="text" name="description"
-									value="<c:out value="${user.roleId}" />" />
+									value="<c:out value="${category.description}" />" />
 
 							</div>
 						</div>
@@ -53,8 +46,8 @@
 			<div class="panel-heading">
 				<div>
 					<a class="btn btn-md btn-success"
-						href="<%=request.getContextPath()%>/user-manager?action=insert"
-						role="button"><i class="fa fa-plus" aria-hidden="true"></i>
+						href="<%=request.getContextPath()%>/category-manager?action=insert"
+						category="button"><i class="fa fa-plus" aria-hidden="true"></i>
 						Add New</a>
 				</div>
 			</div>
@@ -64,35 +57,27 @@
 					<table class="table table-hover">
 						<thead>
 							<tr>
-								<th>User Id</th>
-								<th>Username</th>
-								<th>Password</th>
-								<th>Full Name</th>
-								<th>Role Id</th>
+								<th>Category Id</th>
+								<th>Name</th>
+								<th>Description</th>
 								<th style="text-align: center">Action</th>
 							</tr>
 						</thead>
-						<c:forEach items="${listUser}" var="u">
+						<c:forEach items="${categorys}" var="category">
 							<tbody>
 								<tr>
-									<td><c:out value="${u.userId }"></c:out></td>
-									<td><c:out value="${u.username }"></c:out></td>
-									<td><c:out value="${u.password }"></c:out></td>
-									<td><c:out value="${u.fullName }"></c:out></td>
-									<td><c:out value="${u.roleId }"></c:out></td>
+									<td><c:out value="${category.categoryId }"></c:out></td>
+									<td><c:out value="${category.name }"></c:out></td>
+									<td><c:out value="${category.description }"></c:out></td>
 									<td><a class="btn btn-md btn-info"
-										href="<%=request.getContextPath() %>/user-manager?action=edit&id=<c:out value="${u.userId}"></c:out>"
-										role="button"><i class="fa fa-pencil-square-o"></i>&nbsp;
+										href="<%=request.getContextPath() %>/category-manager?action=edit&id=<c:out value="${category.categoryId }"></c:out>"
+										category="button"><i class="fa fa-pencil-square-o"></i>&nbsp;
 											Edit</a></td>
 									<td><a
 										onclick="return confirm('Bạn có chắc chắn muốn xóa?')"
 										class="btn btn-md btn-danger"
-										href="<%=request.getContextPath() %>/user-manager?action=delete&id=<c:out value="${u.userId}"></c:out>"
-										role="button"><i class="fa fa-trash"></i>&nbsp;Delete</a></td>
-										<td><a class="btn btn-md btn-info"
-										href="<%=request.getContextPath() %>/user-manager?action=edit&id=<c:out value="${u.userId}"></c:out>"
-										role="button"><i class="fa fa-sort"></i>&nbsp;
-											Update Role</a></td>
+										href="<%=request.getContextPath() %>/category-manager?action=delete&id=<c:out value="${category.categoryId }"></c:out>"
+										category="button"><i class="fa fa-trash"></i>&nbsp;Delete</a></td>
 
 
 								</tr>
@@ -110,7 +95,7 @@
 								.getAttribute("count")).intValue()
 						? "active"
 						: "")%>"><a
-								href="<%=request.getContextPath()%>/role-manager?action=search&page=<c:out value ='${i}'/>">
+								href="<%=request.getContextPath()%>/category-manager?action=search&page=<c:out value ='${i}'/>">
 									<c:out value="${i}" />
 							</a></li>
 						</c:forEach>

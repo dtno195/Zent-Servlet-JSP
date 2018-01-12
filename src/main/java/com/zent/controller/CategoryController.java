@@ -11,27 +11,27 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.zent.entity.User;
-import com.zent.service.UserDAO;
+import com.zent.entity.Category;
+import com.zent.service.CategoryDAO;
 import com.zent.util.Constants;
 
 /**
  * Servlet implementation class UserController
  */
-@WebServlet("/user-manager")
-public class UserController extends HttpServlet {
+@WebServlet("/category-manager")
+public class CategoryController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private static String INSER_OR_EDIT = "/pages/user_cu.jsp";
-	private static String SEARCH = "/pages/user.jsp";
-	private UserDAO dao;
+	private static String INSER_OR_EDIT = "/pages/category_cu.jsp";
+	private static String SEARCH = "/pages/category.jsp";
+	private CategoryDAO dao;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public UserController() {
+	public CategoryController() {
 		super();
-		dao = new UserDAO();
+		dao = new CategoryDAO();
 	}
 
 	/**
@@ -42,33 +42,32 @@ public class UserController extends HttpServlet {
 			throws ServletException, IOException {
 		String forward = "";
 		String action = request.getParameter("action");
-//		List<User> list = dao.getAll();
-//		request.setAttribute("listUser", list);
+//		List<Role> list = dao.getAll();
+//		request.setAttribute("listRole", list);
 		if (action.equalsIgnoreCase("delete")) {
-			Long userId = Long.parseLong(request.getParameter("id"));
-			User user = new User();
-			user.setUserId(userId);
-			dao.delete(user);
-			response.sendRedirect(request.getContextPath() + "/user-manager?action=search&page=1");
+			Long categoryId = Long.parseLong(request.getParameter("id"));
+			Category c = new Category();
+			c.setCategoryId(categoryId);
+			dao.delete(c);
+			response.sendRedirect(request.getContextPath() + "/category-manager?action=search&page=1");
 			return;
-
 		} else if (action.equalsIgnoreCase("edit")) {
 			forward = INSER_OR_EDIT;
-			Long userId = Long.parseLong(request.getParameter("id"));
-			User user = dao.getById(userId);
-			request.setAttribute("user", user);
+			Long categoryId = Long.parseLong(request.getParameter("id"));
+			Category c = dao.getById(categoryId);
+			request.setAttribute("role", c);
 		} else if (action.equalsIgnoreCase("search")) {
 			forward = SEARCH;
 			Integer page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
-			User user = new User();
-			setSearchList(request, user, page);
-		}else {
+			Category c = new Category();
+			setSearchList(request, page, c);
+		} else {
 			forward = INSER_OR_EDIT;
 		}
 
 		RequestDispatcher view = request.getRequestDispatcher(forward);
 		view.forward(request, response);
-		
+
 	}
 
 	/**
@@ -77,37 +76,40 @@ public class UserController extends HttpServlet {
 	 */
 	protected void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
+		// TODO Auto-generated method stub
 		String action = request.getParameter("action");
-		User user = new User();
-		user.setUsername(request.getParameter("username"));
-		user.setPassword(request.getParameter("password"));
-		user.setFullName(request.getParameter("fullname"));
+		Category c = new Category();
+		c.setName(request.getParameter("name"));
+		c.setDescription(request.getParameter("description"));
 		if(action.equalsIgnoreCase("save")) {
-			String userId = request.getParameter("id");
-			if(userId == null || userId.isEmpty()) {
-				dao.insert(user);
+			String categoryId = request.getParameter("id");
+			if(categoryId == null || categoryId.isEmpty()) {
+				dao.insert(c);
 			}else {
-				user.setUserId(Long.parseLong(userId));
-				dao.update(user);
+				c.setCategoryId(Long.parseLong(categoryId));
+				dao.update(c);
 			}
-			response.sendRedirect(request.getContextPath()+"/user-manager?action=search&page=1");
+			response.sendRedirect(request.getContextPath()+"/category-manager?action=search&page=1");
 		}
 		else if(action.equalsIgnoreCase("search")) {
 			String foward = SEARCH;
 			Integer page = request.getParameter("page") != null ? Integer
 					.parseInt(request.getParameter("page")) : 1;
-			setSearchList(request, user, page);
+			setSearchList(request, page, c);
 			RequestDispatcher dispatcher = request.getRequestDispatcher(foward);
 			dispatcher.forward(request, response);
 		}
 	}
-	private void setSearchList(HttpServletRequest request,User user,Integer pageNumber) {
+
+	private void setSearchList(HttpServletRequest request, Integer page,Category c) {
 		Integer pageSize = Constants.PAGE_SIZE;
-		request.setAttribute("listUser", dao.search(user, pageNumber, pageSize));
-		Long count = dao.getCount(user);
+		request.setAttribute("categorys", dao.search(c, page, pageSize));
+		
+		Long count = dao.getCount(c);
 		if (count % pageSize != 0)
 			count = (long) (Math.ceil(Double.parseDouble(count.toString())/Constants.PAGE_SIZE));
 		request.setAttribute("count", count);
+		
 	}
 
 }

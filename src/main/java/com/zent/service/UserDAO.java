@@ -145,7 +145,7 @@ public class UserDAO {
 		List<User> result = new ArrayList<User>();
 		String sql = "SELECT * FROM tbl_User WHERE 1=1 ";
 		
-		
+		Integer count = 0;
 		try {
 			Connection conn;
 			conn = DBConnection.open();
@@ -160,7 +160,16 @@ public class UserDAO {
 				sql+= " LIMIT "+((pageNumber - 1) * pageSize)+" , "+pageSize;
 			}
 			PreparedStatement statement = conn.prepareStatement(sql);
-			
+			if (user.getUsername() != null && user.getUsername().trim() != "") {
+				count++;
+				statement.setString(count, "%" + user.getUsername().trim()
+						+ "%");
+			}
+			if (user.getFullName() != null && user.getFullName().trim() != "") {
+				count++;
+				statement.setString(count, "%" + user.getFullName().trim()
+						+ "%");
+			}
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				User u = new User();

@@ -10,21 +10,21 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.zent.entity.Role;
-import com.zent.util.DBConnection;
-import com.zent.util.Constants;
+import com.zent.entity.Category;
 
-public class RoleDAO {
-	public static final Logger LOGGER = LoggerFactory.getLogger(RoleDAO.class);
+import com.zent.util.*;
 
-	public void insert(Role role) {
-		String sql = "INSERT INTO tbl_Role(name,description) VALUES (?,?)";
+public class CategoryDAO {
+	public static final Logger LOGGER = LoggerFactory.getLogger(CategoryDAO.class);
+
+	public void insert(Category category) {
+		String sql = "INSERT INTO tbl_category(name,description) VALUES (?,?)";
 		Connection conn;
 		try {
 			conn = DBConnection.open();
 			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, role.getName());
-			statement.setString(2, role.getDescription());
+			statement.setString(1, category.getName());
+			statement.setString(2, category.getDescription());
 
 			statement.execute();
 		} catch (ClassNotFoundException e) {
@@ -36,15 +36,15 @@ public class RoleDAO {
 		}
 	}
 
-	public void update(Role role) {
-		String sql = "UPDATE tbl_role SET name=?,description=? WHERE role_id=?";
+	public void update(Category category) {
+		String sql = "UPDATE tbl_category SET name=?,description=? WHERE category_id=?";
 		Connection conn;
 		try {
 			conn = DBConnection.open();
 			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, role.getName());
-			statement.setString(2, role.getDescription());
-			statement.setLong(3, role.getId());
+			statement.setString(1, category.getName());
+			statement.setString(2, category.getDescription());
+			statement.setLong(3, category.getCategoryId());
 			statement.execute();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -55,13 +55,13 @@ public class RoleDAO {
 		}
 	}
 
-	public void delete(Role role) {
-		String sql = "DELETE FROM tbl_role WHERE role_id=?";
+	public void delete(Category category) {
+		String sql = "DELETE FROM tbl_category WHERE category_id=?";
 		Connection conn;
 		try {
 			conn = DBConnection.open();
 			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setLong(1, role.getId());
+			statement.setLong(1, category.getCategoryId());
 			statement.execute();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -73,23 +73,23 @@ public class RoleDAO {
 
 	}
 
-	public List<Role> getAll() {
-		String sql = "SELECT * FROM tbl_role";
+	public List<Category> getAll() {
+		String sql = "SELECT * FROM tbl_category";
 		Connection conn;
 		try {
 			conn = DBConnection.open();
 			// Mở kết nối
 			PreparedStatement statement = conn.prepareStatement(sql);
 			ResultSet rs = statement.executeQuery();
-			List<Role> listrole = new ArrayList<Role>();
+			List<Category> listCategory = new ArrayList<Category>();
 			while (rs.next()) {
-				Role role = new Role();
-				role.setId(rs.getLong("role_id"));
+				Category role = new Category();
+				role.setCategoryId(rs.getLong("category_id"));
 				role.setName(rs.getString("name"));
 				role.setDescription(rs.getString("description"));
-				listrole.add(role);
+				listCategory.add(role);
 			}
-			return listrole;
+			return listCategory;
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			LOGGER.error(e.getMessage(), e);
@@ -100,28 +100,27 @@ public class RoleDAO {
 		return null;
 	}
 
-	public Long getCount(Role role) {
-		//String sql = "SELECT COUNT(*) FROM tbl_role WHERE  name LIKE ? OR description LIKE ?  ";
+	public Long getCount(Category category) {
 		
 		try {
 			Connection conn;
 			conn = DBConnection.open();
-			String sql = "SELECT COUNT(*) FROM tbl_role WHERE 1=1";
+			String sql = "SELECT COUNT(*) FROM tbl_category WHERE 1=1";
 			Integer count = 0;
-			if(role.getName() !=null && role.getName().trim() !="") {
+			if(category.getName() !=null && category.getName().trim() !="") {
 				sql+= " AND name LIKE ?";
 			}
-			if(role.getDescription()!=null && role.getDescription().trim() !="") {
+			if(category.getDescription()!=null && category.getDescription().trim() !="") {
 				sql+=" AND description LIKE ?";
 			}
 			PreparedStatement statement = conn.prepareStatement(sql);
-			if(role.getDescription()!=null && role.getDescription().trim() !="") {
+			if(category.getDescription()!=null && category.getDescription().trim() !="") {
 				count++;
-				statement.setString(count, "%"+role.getName().trim()+"%");
+				statement.setString(count, "%"+category.getName().trim()+"%");
 			}
-			if(role.getDescription()!=null && role.getDescription().trim() !="") {
+			if(category.getDescription()!=null && category.getDescription().trim() !="") {
 				count++;
-				statement.setString(count, "%"+role.getDescription().trim()+"%");
+				statement.setString(count, "%"+category.getDescription().trim()+"%");
 			}
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
@@ -137,35 +136,35 @@ public class RoleDAO {
 		return 0L;
 	}
 
-	public List<Role> search(Role role , Integer pageNumber , Integer pageSize) {
-		List<Role> result = new ArrayList<Role>();
+	public List<Category> search(Category category , Integer pageNumber , Integer pageSize) {
+		List<Category> result = new ArrayList<Category>();
 		
 		//sql += " LIMIT " + (page - 1) * Constants.PAGE_SIZE + " , " + Constants.PAGE_SIZE;
 		Integer count = 0;
-		String sql = "SELECT * FROM tbl_role WHERE 1=1 ";
+		String sql = "SELECT * FROM tbl_category WHERE 1=1 ";
 		try {
 			Connection conn;
 			conn = DBConnection.open();
 			
-			if(role.getName() != null && role.getName().trim() != "") {
+			if(category.getName() != null && category.getName().trim() != "") {
 				sql+= " AND name LIKE ?";
 			}
-			if(role.getDescription()!=null && role.getDescription().trim() !="") {
+			if(category.getDescription()!=null && category.getDescription().trim() !="") {
 				sql+=" AND description LIKE ?";
 			}
-			sql+=" ORDER BY role_id ASC ";
+			sql+=" ORDER BY category_id ASC ";
 			if(pageNumber>0 && pageSize >0 ) {
 				sql+= " LIMIT "+((pageNumber - 1) * pageSize)+" , "+pageSize;
 			}
 			PreparedStatement statement = conn.prepareStatement(sql);
-			if (role.getName() != null && role.getName().trim() != "") {
+			if (category.getName() != null && category.getName().trim() != "") {
 				count++;
-				statement.setString(count, "%" + role.getName().trim()
+				statement.setString(count, "%" + category.getName().trim()
 						+ "%");
 			}
-			if (role.getDescription() != null && role.getDescription().trim() != "") {
+			if (category.getDescription() != null && category.getDescription().trim() != "") {
 				count++;
-				statement.setString(count, "%" + role.getDescription().trim()
+				statement.setString(count, "%" + category.getDescription().trim()
 						+ "%");
 
 			}
@@ -173,8 +172,8 @@ public class RoleDAO {
 			ResultSet rs = statement.executeQuery();
 			
 			while (rs.next()) {
-				Role r = new Role();
-				r.setId(rs.getLong(1));
+				Category r = new Category();
+				r.setCategoryId(rs.getLong(1));
 				r.setName(rs.getString(2));
 				r.setDescription(rs.getString(3));
 				result.add(r);
@@ -190,8 +189,8 @@ public class RoleDAO {
 		return result;
 	}
 
-	public Role getById(Long id) {
-		String sql = "SELECT * from tbl_role where role_id=?";
+	public Category getById(Long id) {
+		String sql = "SELECT * from tbl_category where category_id=?";
 		Connection conn;
 		try {
 			conn = DBConnection.open();
@@ -199,13 +198,13 @@ public class RoleDAO {
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setLong(1, id);
 			ResultSet rs = statement.executeQuery();
-			Role role = new Role();
+			Category c = new Category();
 			if (rs.next()) {
-				role.setId(rs.getLong("role_id"));
-				role.setName(rs.getString("name"));
-				role.setDescription(rs.getString("description"));
+				c.setCategoryId(rs.getLong("category_id"));
+				c.setName(rs.getString("name"));
+				c.setDescription(rs.getString("description"));
 			}
-			return role;
+			return c;
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			LOGGER.error(e.getMessage(), e);
