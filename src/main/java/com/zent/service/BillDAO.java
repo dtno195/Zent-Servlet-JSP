@@ -10,22 +10,23 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.zent.entity.Role;
+import com.zent.entity.Bill;
 import com.zent.util.DBConnection;
 import com.zent.util.Constants;
+import com.zent.util.ConvertUtil;
 
-public class RoleDAO {
-	public static final Logger LOGGER = LoggerFactory.getLogger(RoleDAO.class);
+public class BillDAO {
+	public static final Logger LOGGER = LoggerFactory.getLogger(BillDAO.class);
 
-	public void insert(Role role) {
-		String sql = "INSERT INTO tbl_Role(name,description) VALUES (?,?)";
+	public void insert(Bill bill) {
+		String sql = "INSERT INTO tbl_Bill(customer_id,bill_date,sum) VALUES (?,?,?)";
 		Connection conn;
 		try {
 			conn = DBConnection.open();
 			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, role.getName());
-			statement.setString(2, role.getDescription());
-
+			statement.setLong(1, bill.getCustomerId());
+			statement.setDate(2, ConvertUtil.convertDate(bill.getBillDate()));
+			statement.setLong(3, bill.getSum());
 			statement.execute();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -36,15 +37,16 @@ public class RoleDAO {
 		}
 	}
 
-	public void update(Role role) {
-		String sql = "UPDATE tbl_role SET name=?,description=? WHERE role_id=?";
+	public void update(Bill bill) {
+		String sql = "UPDATE tbl_Bill SET customer_id=?,bill_date=?,sum=? WHERE bill_id=?";
 		Connection conn;
 		try {
 			conn = DBConnection.open();
 			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setString(1, role.getName());
-			statement.setString(2, role.getDescription());
-			statement.setLong(3, role.getId());
+			statement.setLong(1, bill.getCustomerId());
+			statement.setDate(2, ConvertUtil.convertDate(bill.getBillDate()));
+			statement.setLong(3, bill.getSum());
+			statement.setLong(4, bill.getBillId());
 			statement.execute();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -55,13 +57,13 @@ public class RoleDAO {
 		}
 	}
 
-	public void delete(Role role) {
-		String sql = "DELETE FROM tbl_role WHERE role_id=?";
+	public void delete(Bill Bill) {
+		String sql = "DELETE FROM tbl_bill WHERE bill_id=?";
 		Connection conn;
 		try {
 			conn = DBConnection.open();
 			PreparedStatement statement = conn.prepareStatement(sql);
-			statement.setLong(1, role.getId());
+			statement.setLong(1, Bill.getBillId());
 			statement.execute();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -73,23 +75,24 @@ public class RoleDAO {
 
 	}
 
-	public List<Role> getAll() {
-		String sql = "SELECT * FROM tbl_role";
+	public List<Bill> getAll() {
+		String sql = "SELECT * FROM tbl_bill";
 		Connection conn;
 		try {
 			conn = DBConnection.open();
 			// Mở kết nối
 			PreparedStatement statement = conn.prepareStatement(sql);
 			ResultSet rs = statement.executeQuery();
-			List<Role> listrole = new ArrayList<Role>();
+			List<Bill> listBill = new ArrayList<Bill>();
 			while (rs.next()) {
-				Role role = new Role();
-				role.setId(rs.getLong("role_id"));
-				role.setName(rs.getString("name"));
-				role.setDescription(rs.getString("description"));
-				listrole.add(role);
+				Bill b = new Bill();
+				b.setBillId(rs.getLong("bill_id"));
+				b.setCustomerId(rs.getLong("customer_id"));
+				b.setBillDate(ConvertUtil.convertDate(rs.getDate("bill_date")));
+				b.setSum(rs.getLong("sum"));
+				listBill.add(b);
 			}
-			return listrole;
+			return listBill;
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			LOGGER.error(e.getMessage(), e);
@@ -100,29 +103,38 @@ public class RoleDAO {
 		return null;
 	}
 
-	public Long getCount(Role role) {
-		//String sql = "SELECT COUNT(*) FROM tbl_role WHERE  name LIKE ? OR description LIKE ?  ";
+	public Long getCount(Bill b) {
+		//String sql = "SELECT COUNT(*) FROM tbl_Bill WHERE  name LIKE ? OR description LIKE ?  ";
 		
 		try {
 			Connection conn;
 			conn = DBConnection.open();
-			String sql = "SELECT COUNT(*) FROM tbl_role WHERE 1=1";
+			String sql = "SELECT COUNT(*) FROM tbl_bill WHERE 1=1";
 			Integer count = 0;
-			if(role.getName() !=null && role.getName().trim() !="") {
-				sql+= " AND name LIKE ?";
+			if(b.getCustomerId() !=null ) {
+				sql+= " AND customer_id LIKE ?";
 			}
-			if(role.getDescription()!=null && role.getDescription().trim() !="") {
-				sql+=" AND description LIKE ?";
+			if(b.getBillDate()!=null) {
+				sql+=" AND bill_date LIKE ?";
+			}
+			if(b.getSum()!=null) {
+				sql+=" AND sum LIKE ?";
 			}
 			PreparedStatement statement = conn.prepareStatement(sql);
-			if(role.getName()!=null && role.getName().trim() !="") {
+			if(b.getCustomerId() !=null ) {
 				count++;
-				statement.setString(count, "%"+role.getName().trim()+"%");
+				statement.setString(count, "%"+b.getCustomerId()+"%");
 			}
-			if(role.getDescription()!=null && role.getDescription().trim() !="") {
+			if(b.getBillDate() !=null ) {
 				count++;
-				statement.setString(count, "%"+role.getDescription().trim()+"%");
+				statement.setString(count, "%"+b.getBillDate()+"%");
 			}
+			if(b.getSum() !=null ) {
+				count++;
+				statement.setString(count, "%"+b.getSum()+"%");
+			}
+			
+			
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				return rs.getLong(1);
@@ -137,47 +149,48 @@ public class RoleDAO {
 		return 0L;
 	}
 
-	public List<Role> search(Role role , Integer pageNumber , Integer pageSize) {
-		List<Role> result = new ArrayList<Role>();
+	public List<Bill> search(Bill b , Integer pageNumber , Integer pageSize) {
+		List<Bill> result = new ArrayList<Bill>();
 		
 		//sql += " LIMIT " + (page - 1) * Constants.PAGE_SIZE + " , " + Constants.PAGE_SIZE;
 		Integer count = 0;
-		String sql = "SELECT * FROM tbl_role WHERE 1=1 ";
+		String sql = "SELECT * FROM tbl_Bill WHERE 1=1 ";
 		try {
 			Connection conn;
 			conn = DBConnection.open();
 			
-			if(role.getName() != null && role.getName().trim() != "") {
-				sql+= " AND name LIKE ?";
+			if(b.getCustomerId() !=null ) {
+				sql+= " AND customer_id LIKE ?";
 			}
-			if(role.getDescription()!=null && role.getDescription().trim() !="") {
-				sql+=" AND description LIKE ?";
+			if(b.getBillDate()!=null) {
+				sql+=" AND bill_date LIKE ?";
 			}
-			sql+=" ORDER BY role_id ASC ";
-			if(pageNumber>0 && pageSize >0 ) {
-				sql+= " LIMIT "+((pageNumber - 1) * pageSize)+" , "+pageSize;
+			if(b.getSum()!=null) {
+				sql+=" AND sum LIKE ?";
 			}
 			PreparedStatement statement = conn.prepareStatement(sql);
-			if (role.getName() != null && role.getName().trim() != "") {
+			if(b.getCustomerId() !=null ) {
 				count++;
-				statement.setString(count, "%" + role.getName().trim()
-						+ "%");
+				statement.setString(count, "%"+b.getCustomerId()+"%");
 			}
-			if (role.getDescription() != null && role.getDescription().trim() != "") {
+			if(b.getBillDate() !=null ) {
 				count++;
-				statement.setString(count, "%" + role.getDescription().trim()
-						+ "%");
-
+				statement.setString(count, "%"+b.getBillDate()+"%");
+			}
+			if(b.getSum() !=null ) {
+				count++;
+				statement.setString(count, "%"+b.getSum()+"%");
 			}
 			
 			ResultSet rs = statement.executeQuery();
 			
 			while (rs.next()) {
-				Role r = new Role();
-				r.setId(rs.getLong(1));
-				r.setName(rs.getString(2));
-				r.setDescription(rs.getString(3));
-				result.add(r);
+				Bill bill = new Bill();
+				bill.setBillId(rs.getLong("bill_id"));
+				bill.setCustomerId(rs.getLong("customer_id"));
+				bill.setBillDate(ConvertUtil.convertDate(rs.getDate("bill_date")));
+				bill.setSum(rs.getLong("sum"));
+				result.add(bill);
 			}
 			return result;
 		} catch (ClassNotFoundException e) {
@@ -190,8 +203,8 @@ public class RoleDAO {
 		return result;
 	}
 
-	public Role getById(Long id) {
-		String sql = "SELECT * from tbl_role where role_id=?";
+	public Bill getById(Long id) {
+		String sql = "SELECT * from tbl_Bill where Bill_id=?";
 		Connection conn;
 		try {
 			conn = DBConnection.open();
@@ -199,13 +212,14 @@ public class RoleDAO {
 			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setLong(1, id);
 			ResultSet rs = statement.executeQuery();
-			Role role = new Role();
+			Bill bill = new Bill();
 			if (rs.next()) {
-				role.setId(rs.getLong("role_id"));
-				role.setName(rs.getString("name"));
-				role.setDescription(rs.getString("description"));
+				bill.setBillId(rs.getLong("bill_id"));
+				bill.setCustomerId(rs.getLong("customer_id"));
+				bill.setBillDate(ConvertUtil.convertDate(rs.getDate("bill_date")));
+				bill.setSum(rs.getLong("sum"));
 			}
-			return role;
+			return bill;
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			LOGGER.error(e.getMessage(), e);

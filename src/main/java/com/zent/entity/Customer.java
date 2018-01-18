@@ -8,7 +8,7 @@ public class Customer {
 	private String address;
 	private String phone;
 	private String email;
-	private Boolean gender;
+	private Integer gender;
 	private Date birthday;
 
 	public Long getCustomerId() {
@@ -51,11 +51,13 @@ public class Customer {
 		this.email = email;
 	}
 
-	public Boolean getGender() {
+	
+
+	public Integer getGender() {
 		return gender;
 	}
 
-	public void setGender(Boolean gender) {
+	public void setGender(Integer gender) {
 		this.gender = gender;
 	}
 
@@ -67,7 +69,8 @@ public class Customer {
 		this.birthday = birthday;
 	}
 
-	public Customer(Long customerId, String name, String address, String phone, String email, Boolean gender,
+	
+	public Customer(Long customerId, String name, String address, String phone, String email, Integer gender,
 			Date birthday) {
 		super();
 		this.customerId = customerId;

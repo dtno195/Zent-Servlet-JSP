@@ -11,27 +11,27 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.zent.entity.Category;
-import com.zent.service.CategoryDAO;
+import com.zent.entity.Product;
+import com.zent.service.ProductDAO;
 import com.zent.util.Constants;
 
 /**
  * Servlet implementation class UserController
  */
-@WebServlet("/category-manager")
-public class CategoryController extends HttpServlet {
+@WebServlet("/product-manager")
+public class ProductController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private static String INSER_OR_EDIT = "/pages/category_cu.jsp";
-	private static String SEARCH = "/pages/category.jsp";
-	private CategoryDAO dao;
+	private static String INSER_OR_EDIT = "/pages/product_cu.jsp";
+	private static String SEARCH = "/pages/product.jsp";
+	private ProductDAO dao;
 
 	/**
 	 * @see HttpServlet#HttpServlet()
 	 */
-	public CategoryController() {
+	public ProductController() {
 		super();
-		dao = new CategoryDAO();
+		dao = new ProductDAO();
 	}
 
 	/**
@@ -45,21 +45,21 @@ public class CategoryController extends HttpServlet {
 //		List<Role> list = dao.getAll();
 //		request.setAttribute("listRole", list);
 		if (action.equalsIgnoreCase("delete")) {
-			Long categoryId = Long.parseLong(request.getParameter("id"));
-			Category c = new Category();
-			c.setCategoryId(categoryId);
+			Long productId = Long.parseLong(request.getParameter("id"));
+			Product c = new Product();
+			c.setProductId(productId);
 			dao.delete(c);
-			response.sendRedirect(request.getContextPath() + "/category-manager?action=search&page=1");
+			response.sendRedirect(request.getContextPath() + "/product-manager?action=search&page=1");
 			return;
 		} else if (action.equalsIgnoreCase("edit")) {
 			forward = INSER_OR_EDIT;
-			Long categoryId = Long.parseLong(request.getParameter("id"));
-			Category c = dao.getById(categoryId);
-			request.setAttribute("category", c);
+			Long productId = Long.parseLong(request.getParameter("id"));
+			Product c = dao.getById(productId);
+			request.setAttribute("product", c);
 		} else if (action.equalsIgnoreCase("search")) {
 			forward = SEARCH;
 			Integer page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
-			Category c = new Category();
+			Product c = new Product();
 			setSearchList(request, page, c);
 		} else {
 			forward = INSER_OR_EDIT;
@@ -78,18 +78,18 @@ public class CategoryController extends HttpServlet {
 			throws ServletException, IOException {
 		// TODO Auto-generated method stub
 		String action = request.getParameter("action");
-		Category c = new Category();
+		Product c = new Product();
 		c.setName(request.getParameter("name"));
 		c.setDescription(request.getParameter("description"));
 		if(action.equalsIgnoreCase("save")) {
-			String categoryId = request.getParameter("id");
-			if(categoryId == null || categoryId.isEmpty()) {
+			String productId = request.getParameter("id");
+			if(productId == null || productId.isEmpty()) {
 				dao.insert(c);
 			}else {
-				c.setCategoryId(Long.parseLong(categoryId));
+				c.setProductId(Long.parseLong(productId));
 				dao.update(c);
 			}
-			response.sendRedirect(request.getContextPath()+"/category-manager?action=search&page=1");
+			response.sendRedirect(request.getContextPath()+"/product-manager?action=search&page=1");
 		}
 		else if(action.equalsIgnoreCase("search")) {
 			String foward = SEARCH;
@@ -101,9 +101,9 @@ public class CategoryController extends HttpServlet {
 		}
 	}
 
-	private void setSearchList(HttpServletRequest request, Integer page,Category c) {
+	private void setSearchList(HttpServletRequest request, Integer page,Product c) {
 		Integer pageSize = Constants.PAGE_SIZE;
-		request.setAttribute("categorys", dao.search(c, page, pageSize));
+		request.setAttribute("products", dao.search(c, page, pageSize));
 		
 		Long count = dao.getCount(c);
 		if (count % pageSize != 0)

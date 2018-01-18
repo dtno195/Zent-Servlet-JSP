@@ -268,7 +268,7 @@
 							<ul class="nav nav-second-level">
 								<li><a href="<%=request.getContextPath()%>/bill-manager?action=search&page=1"><i class="fa fa-credit-card-alt" aria-hidden="true"></i>
 								Bill</a></li>
-								<li><a href="<%=request.getContextPath()%>/bill-details-manager?action=search&page=1"><i class="fa fa-credit-card-alt" aria-hidden="true"></i>
+								<li><a href="<%=request.getContextPath()%>/bill-detail-manager?action=search&page=1"><i class="fa fa-credit-card-alt" aria-hidden="true"></i>
 								Bill Details</a></li>
 							</ul> <!-- /.nav-second-level --></li>
 						<!-- <li><a href="#"><i class="fa fa-bar-chart-o fa-fw"></i>
