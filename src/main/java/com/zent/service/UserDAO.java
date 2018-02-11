@@ -106,26 +106,33 @@ public class UserDAO {
 	}
 
 	public Long getCount(User user) {
-		
+
 		try {
 			Connection conn;
 			String sql = "SELECT COUNT(*) FROM tbl_User WHERE  1=1";
 			conn = DBConnection.open();
 			Integer count = 0;
-			if(user.getUsername() !=null && user.getUsername().trim() !="") {
-				sql+=" AND username LIKE ?";
+			if (user.getUsername() != null && user.getUsername().trim() != "") {
+				sql += " AND username LIKE ?";
 			}
-			if(user.getFullName() !=null && user.getFullName().trim() !="") {
-				sql+=" AND full_name LIKE ?";
+			if (user.getFullName() != null && user.getFullName().trim() != "") {
+				sql += " AND full_name LIKE ?";
+			}
+			if (user.getRoleId() != null) {
+				sql += " AND role_id LIKE ?";
 			}
 			PreparedStatement statement = conn.prepareStatement(sql);
-			if(user.getFullName() !=null && user.getFullName().trim() !="") {
+			if (user.getUsername() != null && user.getUsername().trim() != "") {
 				count++;
-				statement.setString(count, "%"+user.getUsername()+"%");
+				statement.setString(count, "%" + user.getUsername() + "%");
 			}
-			if(user.getFullName() !=null && user.getFullName().trim() !="") {
+			if (user.getFullName() != null && user.getFullName().trim() != "") {
 				count++;
-				statement.setString(count, "%"+user.getFullName()+"%");
+				statement.setString(count, "%" + user.getFullName() + "%");
+			}
+			if (user.getRoleId() != null) {
+				count++;
+				statement.setString(count, "%" + user.getRoleId() + "%");
 			}
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
@@ -141,35 +148,41 @@ public class UserDAO {
 		return 0L;
 	}
 
-	public List<User> search(User user, Integer pageNumber , Integer pageSize) {
-		List<User> result = new ArrayList<User>();
+	public List<User> search(User user, Integer pageNumber, Integer pageSize) {
+
 		String sql = "SELECT * FROM tbl_User WHERE 1=1 ";
-		
+
 		Integer count = 0;
 		try {
 			Connection conn;
 			conn = DBConnection.open();
-			if(user.getUsername() !=null && user.getUsername().trim() !="") {
-				sql+=" AND username LIKE ?";
+			if (user.getUsername() != null && user.getUsername().trim() != "") {
+				sql += " AND username LIKE ?";
 			}
-			if(user.getFullName() !=null && user.getFullName().trim() !="") {
-				sql+=" AND full_name LIKE ?";
+			if (user.getFullName() != null && user.getFullName().trim() != "") {
+				sql += " AND full_name LIKE ?";
 			}
-			sql+=" ORDER BY user_id ASC ";
-			if(pageNumber>0 && pageSize >0 ) {
-				sql+= " LIMIT "+((pageNumber - 1) * pageSize)+" , "+pageSize;
+			if (user.getRoleId() != null) {
+				sql += " AND role_id LIKE ?";
+			}
+			sql += " ORDER BY user_id ASC ";
+			if (pageNumber > 0 && pageSize > 0) {
+				sql += " LIMIT " + ((pageNumber - 1) * pageSize) + " , " + pageSize;
 			}
 			PreparedStatement statement = conn.prepareStatement(sql);
 			if (user.getUsername() != null && user.getUsername().trim() != "") {
 				count++;
-				statement.setString(count, "%" + user.getUsername().trim()
-						+ "%");
+				statement.setString(count, "%" + user.getUsername().trim() + "%");
 			}
 			if (user.getFullName() != null && user.getFullName().trim() != "") {
 				count++;
-				statement.setString(count, "%" + user.getFullName().trim()
-						+ "%");
+				statement.setString(count, "%" + user.getFullName().trim() + "%");
 			}
+			if (user.getRoleId() != null) {
+				count++;
+				statement.setString(count, "%" + user.getRoleId() + "%");
+			}
+			List<User> result = new ArrayList<User>();
 			ResultSet rs = statement.executeQuery();
 			while (rs.next()) {
 				User u = new User();
@@ -178,7 +191,7 @@ public class UserDAO {
 				u.setPassword(rs.getString("password"));
 				u.setFullName(rs.getString("full_name"));
 				u.setRoleId(rs.getLong("role_id"));
-				result.add(user);
+				result.add(u);
 			}
 			return result;
 		} catch (ClassNotFoundException e) {
@@ -188,11 +201,11 @@ public class UserDAO {
 			// TODO Auto-generated catch block
 			LOGGER.error(e.getMessage(), e);
 		}
-		return result;
+		return new ArrayList<User>();
 	}
 
 	public User getById(Long id) {
-		String sql = "SELECT * from tbl_User where id=?";
+		String sql = "SELECT * from tbl_User where user_id=?";
 		Connection conn;
 		try {
 			conn = DBConnection.open();
@@ -218,11 +231,12 @@ public class UserDAO {
 		}
 		return null;
 	}
+
 	public static Boolean checkLogin(User user) {
 		String sql = "SELECT COUNT(*) FROM tbl_user WHERE username =? AND password=?";
 		try {
 			Connection conn = DBConnection.open(); // Mở kết nối
-			PreparedStatement statement = conn.prepareStatement(sql); 
+			PreparedStatement statement = conn.prepareStatement(sql);
 			statement.setString(1, user.getUsername());
 			statement.setString(2, user.getPassword());
 			// Thực hiện câu truy vấn và lấy ra kết quả trả về
@@ -238,10 +252,10 @@ public class UserDAO {
 			}
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			LOGGER.error(e.getMessage(),e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			LOGGER.error(e.getMessage(),e);
+			LOGGER.error(e.getMessage(), e);
 		}
 		return false;
 	}
@@ -260,10 +274,31 @@ public class UserDAO {
 
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
-			LOGGER.error(e.getMessage(),e);
+			LOGGER.error(e.getMessage(), e);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			LOGGER.error(e.getMessage(),e);
+			LOGGER.error(e.getMessage(), e);
+		}
+		return null;
+	}
+	public static String getRoleId(String username) {
+		String sql = "SELECT role_id FROM tbl_user where username=?";
+		try {
+			Connection conn = DBConnection.open();
+			// Mở kết nối
+			PreparedStatement statement = conn.prepareStatement(sql);
+			statement.setString(1, username);
+			ResultSet rs = statement.executeQuery();
+			if (rs.next()) {
+				return rs.getString("role_id");
+			}
+
+		} catch (ClassNotFoundException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error(e.getMessage(), e);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			LOGGER.error(e.getMessage(), e);
 		}
 		return null;
 	}

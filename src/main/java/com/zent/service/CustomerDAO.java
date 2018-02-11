@@ -18,7 +18,7 @@ public class CustomerDAO {
 	public static final Logger LOGGER = LoggerFactory.getLogger(CustomerDAO.class);
 
 	public void insert(Customer customer) {
-		String sql = "INSERT INTO tbl_customer(name,address,phone,email,gender,birthday) VALUES (?,?,?,?,?,?)";
+		String sql = "INSERT INTO tbl_customer(name,address,phone,email,date) VALUES (?,?,?,?,?)";
 		Connection conn;
 		try {
 			conn = DBConnection.open();
@@ -27,8 +27,7 @@ public class CustomerDAO {
 			statement.setString(2, customer.getAddress());
 			statement.setString(3, customer.getPhone());
 			statement.setString(4, customer.getEmail());
-			statement.setInt(5, customer.getGender());
-			statement.setDate(6, ConvertUtil.convertDate(customer.getBirthday()));
+			statement.setDate(6, ConvertUtil.convertDate(customer.getDate()));
 			statement.execute();
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
@@ -40,7 +39,7 @@ public class CustomerDAO {
 	}
 
 	public void update(Customer customer) {
-		String sql = "UPDATE tbl_customer SET name=?,address=?,phone=?,email=?,gender=?,birthday=? WHERE customer_id=?";
+		String sql = "UPDATE tbl_customer SET name=?,address=?,phone=?,email=?,date=? WHERE customer_id=?";
 		Connection conn;
 		try {
 			conn = DBConnection.open();
@@ -49,8 +48,7 @@ public class CustomerDAO {
 			statement.setString(2, customer.getAddress());
 			statement.setString(3, customer.getPhone());
 			statement.setString(4, customer.getEmail());
-			statement.setInt(5, customer.getGender());
-			statement.setDate(6, ConvertUtil.convertDate(customer.getBirthday()));
+			statement.setDate(6, ConvertUtil.convertDate(customer.getDate()));
 			statement.setLong(7, customer.getCustomerId());
 			statement.execute();
 		} catch (ClassNotFoundException e) {
@@ -96,8 +94,7 @@ public class CustomerDAO {
 				c.setAddress(rs.getString("address"));
 				c.setPhone(rs.getString("phone"));
 				c.setEmail(rs.getString("email"));
-				c.setGender(rs.getInt("gender"));
-				c.setBirthday(rs.getDate("birthday"));
+				c.setDate(rs.getDate("date"));
 				
 				listCustomer.add(c);
 			}
@@ -131,11 +128,9 @@ public class CustomerDAO {
 			if(customer.getEmail()!=null && customer.getEmail().trim() !="") {
 				sql+=" AND address LIKE ?";
 			}
-			if(customer.getGender()!=null) {
-				sql+=" AND gender LIKE ?";
-			}
-			if(customer.getBirthday()!=null) {
-				sql+=" AND birthday LIKE ?";
+		
+			if(customer.getDate()!=null) {
+				sql+=" AND date LIKE ?";
 			}
 			
 			PreparedStatement statement = conn.prepareStatement(sql);
@@ -155,13 +150,10 @@ public class CustomerDAO {
 				count++;
 				statement.setString(count, "%"+customer.getEmail().trim()+"%");
 			}
-			if(customer.getGender()!=null) {
+			
+			if(customer.getDate()!=null) {
 				count++;
-				statement.setString(count, "%"+customer.getGender()+"%");
-			}
-			if(customer.getBirthday()!=null) {
-				count++;
-				statement.setString(count, "%"+customer.getBirthday()+"%");
+				statement.setString(count, "%"+customer.getDate()+"%");
 			}
 			
 			ResultSet rs = statement.executeQuery();
@@ -199,11 +191,9 @@ public class CustomerDAO {
 			if(customer.getEmail()!=null && customer.getEmail().trim() !="") {
 				sql+=" AND address LIKE ?";
 			}
-			if(customer.getGender()!=null) {
-				sql+=" AND gender LIKE ?";
-			}
-			if(customer.getBirthday()!=null) {
-				sql+=" AND birthday LIKE ?";
+			
+			if(customer.getDate()!=null) {
+				sql+=" AND date LIKE ?";
 			}
 			sql+=" ORDER BY customer_id ASC ";
 			if(pageNumber>0 && pageSize >0 ) {
@@ -226,13 +216,10 @@ public class CustomerDAO {
 				count++;
 				statement.setString(count, "%"+customer.getEmail().trim()+"%");
 			}
-			if(customer.getGender()!=null) {
+			
+			if(customer.getDate()!=null) {
 				count++;
-				statement.setString(count, "%"+customer.getGender()+"%");
-			}
-			if(customer.getBirthday()!=null) {
-				count++;
-				statement.setString(count, "%"+customer.getBirthday()+"%");
+				statement.setString(count, "%"+customer.getDate()+"%");
 			}
 			
 			ResultSet rs = statement.executeQuery();
@@ -244,8 +231,7 @@ public class CustomerDAO {
 				c.setAddress(rs.getString("address"));
 				c.setPhone(rs.getString("phone"));
 				c.setEmail(rs.getString("email"));
-				c.setGender(rs.getInt("gender"));
-				c.setBirthday(rs.getDate("birthday"));
+				c.setDate(rs.getDate("date"));
 				result.add(c);
 			}
 			return result;
@@ -275,8 +261,7 @@ public class CustomerDAO {
 				c.setAddress(rs.getString("address"));
 				c.setPhone(rs.getString("phone"));
 				c.setEmail(rs.getString("email"));
-				c.setGender(rs.getInt("gender"));
-				c.setBirthday(rs.getDate("birthday"));
+				c.setDate(rs.getDate("date"));
 			}
 			return c;
 		} catch (ClassNotFoundException e) {

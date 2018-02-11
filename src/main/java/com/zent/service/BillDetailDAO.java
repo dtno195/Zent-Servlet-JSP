@@ -187,10 +187,10 @@ public class BillDetailDAO {
 
 			while (rs.next()) {
 				BillDetail bill = new BillDetail();
-				b.setBillDetailId(rs.getLong("bill_detail_id"));
-				b.setBillId(rs.getLong("bill_id"));
-				b.setProductId(rs.getLong("product_id"));
-				b.setQuantity(rs.getInt("quantity"));
+				bill.setBillDetailId(rs.getLong("bill_detail_id"));
+				bill.setBillId(rs.getLong("bill_id"));
+				bill.setProductId(rs.getLong("product_id"));
+				bill.setQuantity(rs.getInt("quantity"));
 				result.add(bill);
 			}
 			return result;

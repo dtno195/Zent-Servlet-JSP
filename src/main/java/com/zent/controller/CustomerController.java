@@ -10,6 +10,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.zent.entity.Customer;
 import com.zent.service.CustomerDAO;
@@ -22,8 +23,8 @@ import com.zent.util.Constants;
 public class CustomerController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private static String INSER_OR_EDIT = "/pages/customer_cu.jsp";
-	private static String SEARCH = "/pages/customer.jsp";
+	private static String INSER_OR_EDIT = "/dashboard-page/customer_cu.jsp";
+	private static String SEARCH = "/dashboard-page/customer.jsp";
 	private CustomerDAO dao;
 
 	/**
@@ -40,32 +41,37 @@ public class CustomerController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String forward = "";
-		String action = request.getParameter("action");
-		if (action.equalsIgnoreCase("delete")) {
-			Long customerId = Long.parseLong(request.getParameter("id"));
-			Customer customer = new Customer();
-			customer.setCustomerId(customerId);
-			dao.delete(customer);
-			response.sendRedirect(request.getContextPath() + "/customer-manager?action=search&page=1");
-			return;
-		} else if (action.equalsIgnoreCase("edit")) {
-			forward = INSER_OR_EDIT;
-			Long customerId = Long.parseLong(request.getParameter("id"));
-			Customer customer = dao.getById(customerId);
-			request.setAttribute("customer", customer);
-		} else if (action.equalsIgnoreCase("search")) {
-			forward = SEARCH;
-			Integer page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
-			Customer c = new Customer();
-			setSearchList(request, page, c);
+		HttpSession ss = request.getSession();
+		if (ss.getAttribute("username") == null) {
+			response.sendRedirect(request.getContextPath() + "/login");
 		} else {
-			forward = INSER_OR_EDIT;
+			String forward = "";
+			String action = request.getParameter("action");
+			if (action.equalsIgnoreCase("delete")) {
+				Long customerId = Long.parseLong(request.getParameter("id"));
+				Customer customer = new Customer();
+				customer.setCustomerId(customerId);
+				dao.delete(customer);
+				response.sendRedirect(request.getContextPath() + "/customer-manager?action=search&page=1");
+				return;
+			} else if (action.equalsIgnoreCase("edit")) {
+				forward = INSER_OR_EDIT;
+				Long customerId = Long.parseLong(request.getParameter("id"));
+				Customer customer = dao.getById(customerId);
+				request.setAttribute("customer", customer);
+			} else if (action.equalsIgnoreCase("search")) {
+				forward = SEARCH;
+				Integer page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page"))
+						: 1;
+				Customer c = new Customer();
+				setSearchList(request, page, c);
+			} else {
+				forward = INSER_OR_EDIT;
+			}
+
+			RequestDispatcher view = request.getRequestDispatcher(forward);
+			view.forward(request, response);
 		}
-
-		RequestDispatcher view = request.getRequestDispatcher(forward);
-		view.forward(request, response);
-
 	}
 
 	/**
@@ -81,18 +87,11 @@ public class CustomerController extends HttpServlet {
 		customer.setAddress(request.getParameter("address"));
 		customer.setPhone(request.getParameter("phone"));
 		customer.setEmail(request.getParameter("email"));
+
 		try {
-			if (request.getParameter("gender") != null) {
-				Integer gender = Integer.parseInt(request.getParameter("gender"));
-				customer.setGender(gender);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		try {
-			if (request.getParameter("birthday") != null) {
-				Date birthday = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("birthday"));
-				customer.setBirthday(birthday);
+			if (request.getParameter("date") != null) {
+				Date date = new SimpleDateFormat("yyyy-MM-dd").parse(request.getParameter("date"));
+				customer.setDate(date);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

@@ -1,5 +1,5 @@
 package com.zent.util;
 
 public class Constants {
-	public static final Integer PAGE_SIZE = 4;
+	public static final Integer PAGE_SIZE = 12;
 }

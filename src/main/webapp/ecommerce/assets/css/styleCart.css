@@ -1,0 +1,9 @@
+#removeItem{
+  position: absolute;
+  top: 3px;
+  right: 7px;
+}
+.searchProduct{
+  width: 300px;
+  float: right
+}

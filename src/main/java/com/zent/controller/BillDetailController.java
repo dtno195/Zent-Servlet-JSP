@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.zent.entity.BillDetail;
 import com.zent.service.BillDetailDAO;
@@ -42,34 +43,40 @@ public class BillDetailController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String forward = "";
-		String action = request.getParameter("action");
-		// List<Role> list = dao.getAll();
-		// request.setAttribute("listRole", list);
-		if (action.equalsIgnoreCase("delete")) {
-			Long billId = Long.parseLong(request.getParameter("id"));
-			BillDetail b = new BillDetail();
-			b.setBillId(billId);
-			dao.delete(b);
-			response.sendRedirect(request.getContextPath() + "/bill-detail-manager?action=search&page=1");
-			return;
-		} else if (action.equalsIgnoreCase("edit")) {
-			forward = INSER_OR_EDIT;
-			Long billId = Long.parseLong(request.getParameter("id"));
-			BillDetail b = dao.getById(billId);
-			request.setAttribute("billDetail", b);
-		} else if (action.equalsIgnoreCase("search")) {
-			forward = SEARCH;
-			Integer page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
-			BillDetail c = new BillDetail();
-			setSearchList(request, page, c);
+		HttpSession ss = request.getSession();
+		if (ss.getAttribute("username") == null) {
+			response.sendRedirect(request.getContextPath() + "/login");
 		} else {
-			forward = INSER_OR_EDIT;
+
+			String forward = "";
+			String action = request.getParameter("action");
+			// List<Role> list = dao.getAll();
+			// request.setAttribute("listRole", list);
+			if (action.equalsIgnoreCase("delete")) {
+				Long billId = Long.parseLong(request.getParameter("id"));
+				BillDetail b = new BillDetail();
+				b.setBillId(billId);
+				dao.delete(b);
+				response.sendRedirect(request.getContextPath() + "/bill-detail-manager?action=search&page=1");
+				return;
+			} else if (action.equalsIgnoreCase("edit")) {
+				forward = INSER_OR_EDIT;
+				Long billId = Long.parseLong(request.getParameter("id"));
+				BillDetail b = dao.getById(billId);
+				request.setAttribute("billDetail", b);
+			} else if (action.equalsIgnoreCase("search")) {
+				forward = SEARCH;
+				Integer page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page"))
+						: 1;
+				BillDetail c = new BillDetail();
+				setSearchList(request, page, c);
+			} else {
+				forward = INSER_OR_EDIT;
+			}
+
+			RequestDispatcher view = request.getRequestDispatcher(forward);
+			view.forward(request, response);
 		}
-
-		RequestDispatcher view = request.getRequestDispatcher(forward);
-		view.forward(request, response);
-
 	}
 
 	/**
@@ -81,16 +88,16 @@ public class BillDetailController extends HttpServlet {
 		// TODO Auto-generated method stub
 		String action = request.getParameter("action");
 		BillDetail b = new BillDetail();
-		if (request.getParameter("billId") != null && request.getParameter("billId").trim()!="") {
+		if (request.getParameter("billId") != null && request.getParameter("billId").trim() != "") {
 			Long billId = Long.parseLong(request.getParameter("billId"));
 			b.setBillId(billId);
 		}
 
-		if (request.getParameter("productId") != null && request.getParameter("productId").trim() !="") {
+		if (request.getParameter("productId") != null && request.getParameter("productId").trim() != "") {
 			Long productId = Long.parseLong(request.getParameter("productId"));
 			b.setProductId(productId);
 		}
-		if (request.getParameter("quantity") != null && request.getParameter("quantity").trim() !="") {
+		if (request.getParameter("quantity") != null && request.getParameter("quantity").trim() != "") {
 			Integer quantity = Integer.parseInt(request.getParameter("quantity"));
 			b.setQuantity(quantity);
 		}

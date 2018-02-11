@@ -1,0 +1,57 @@
+.searchProduct {
+	width: 300px;
+	float: right
+}
+
+.page-eco {
+	position: absolute;
+	bottom: -40px;
+	left: 543px;
+	font-size: 20px;
+	font-family: arial;
+}
+
+.page-eco>ul>li {
+	padding: 10px;
+}
+
+.logo .simple-text {
+	margin-left: 60px;
+}
+
+.searchEco {
+	float: right;
+	width: 30%;
+	height: 100px;
+	position: absolute;
+	top: 21px;
+	right: 27px;
+}
+
+.searchEco input {
+	width: 70%
+}
+
+.searchIcon {
+	float: right;
+	margin-top: -55px;
+	margin-right: 40px
+}
+
+.searchIcon i {
+	color: white;
+}
+
+.floated {
+	width: 50%;
+	float: left;
+	margin-left: -20px;
+}
+
+.logout-s>li {
+	margin: 20px;
+	margin-top: 1px;
+}
+.category>li{
+	margin-right: 50px;
+}

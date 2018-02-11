@@ -9,7 +9,7 @@ public class Product {
 	private Long price;
 	private String description;
 	private String image;
-	private Double size;
+	private String size;
 
 	public Long getProductId() {
 		return productId;
@@ -75,16 +75,16 @@ public class Product {
 		this.image = image;
 	}
 
-	public Double getSize() {
+	public String getSize() {
 		return size;
 	}
 
-	public void setSize(Double size) {
+	public void setSize(String size) {
 		this.size = size;
 	}
 
 	public Product(Long productId, Long categoryId, String name, String code, Integer quantity, Long price,
-			String description, String image, Double size) {
+			String description, String image, String size) {
 		super();
 		this.productId = productId;
 		this.categoryId = categoryId;

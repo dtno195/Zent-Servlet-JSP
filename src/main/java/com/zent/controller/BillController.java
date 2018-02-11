@@ -12,6 +12,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import com.zent.entity.Bill;
 import com.zent.service.BillDAO;
@@ -24,8 +25,8 @@ import com.zent.util.Constants;
 public class BillController extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 
-	private static String INSER_OR_EDIT = "/pages/bill_cu.jsp";
-	private static String SEARCH = "/pages/bill.jsp";
+	private static String INSER_OR_EDIT = "/dashboard-page/bill_cu.jsp";
+	private static String SEARCH = "/dashboard-page/bill.jsp";
 	private BillDAO dao;
 
 	/**
@@ -42,34 +43,40 @@ public class BillController extends HttpServlet {
 	 */
 	protected void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-		String forward = "";
-		String action = request.getParameter("action");
-		// List<Role> list = dao.getAll();
-		// request.setAttribute("listRole", list);
-		if (action.equalsIgnoreCase("delete")) {
-			Long billId = Long.parseLong(request.getParameter("id"));
-			Bill b = new Bill();
-			b.setBillId(billId);
-			dao.delete(b);
-			response.sendRedirect(request.getContextPath() + "/bill-manager?action=search&page=1");
-			return;
-		} else if (action.equalsIgnoreCase("edit")) {
-			forward = INSER_OR_EDIT;
-			Long billId = Long.parseLong(request.getParameter("id"));
-			Bill b = dao.getById(billId);
-			request.setAttribute("bill", b);
-		} else if (action.equalsIgnoreCase("search")) {
-			forward = SEARCH;
-			Integer page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page")) : 1;
-			Bill c = new Bill();
-			setSearchList(request, page, c);
+		HttpSession ss = request.getSession();
+		if (ss.getAttribute("username") == null) {
+			response.sendRedirect(request.getContextPath() + "/login");
 		} else {
-			forward = INSER_OR_EDIT;
+
+			String forward = "";
+			String action = request.getParameter("action");
+			// List<Role> list = dao.getAll();
+			// request.setAttribute("listRole", list);
+			if (action.equalsIgnoreCase("delete")) {
+				Long billId = Long.parseLong(request.getParameter("id"));
+				Bill b = new Bill();
+				b.setBillId(billId);
+				dao.delete(b);
+				response.sendRedirect(request.getContextPath() + "/bill-manager?action=search&page=1");
+				return;
+			} else if (action.equalsIgnoreCase("edit")) {
+				forward = INSER_OR_EDIT;
+				Long billId = Long.parseLong(request.getParameter("id"));
+				Bill b = dao.getById(billId);
+				request.setAttribute("bill", b);
+			} else if (action.equalsIgnoreCase("search")) {
+				forward = SEARCH;
+				Integer page = request.getParameter("page") != null ? Integer.parseInt(request.getParameter("page"))
+						: 1;
+				Bill c = new Bill();
+				setSearchList(request, page, c);
+			} else {
+				forward = INSER_OR_EDIT;
+			}
+
+			RequestDispatcher view = request.getRequestDispatcher(forward);
+			view.forward(request, response);
 		}
-
-		RequestDispatcher view = request.getRequestDispatcher(forward);
-		view.forward(request, response);
-
 	}
 
 	/**
@@ -81,12 +88,12 @@ public class BillController extends HttpServlet {
 		// TODO Auto-generated method stub
 		String action = request.getParameter("action");
 		Bill b = new Bill();
-		if (request.getParameter("customerId") != null && request.getParameter("customerId").trim()!="") {
+		if (request.getParameter("customerId") != null && request.getParameter("customerId").trim() != "") {
 			Long customerId = Long.parseLong(request.getParameter("customerId"));
 			b.setCustomerId(customerId);
 		}
 
-		if (request.getParameter("bill_date") != null && request.getParameter("bill_date").trim() !="") {
+		if (request.getParameter("bill_date") != null && request.getParameter("bill_date").trim() != "") {
 
 			try {
 				Date billDate;
@@ -98,7 +105,7 @@ public class BillController extends HttpServlet {
 			}
 
 		}
-		if (request.getParameter("sum") != null && request.getParameter("sum").trim()!=null) {
+		if (request.getParameter("sum") != null && request.getParameter("sum").trim() != "") {
 			Long sum = Long.parseLong(request.getParameter("sum"));
 			b.setSum(sum);
 		}
